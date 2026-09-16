@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { CACHE_TTL_MS, DeliveryWeatherService } = require('../src/weather');
+const { CACHE_TTL_MS, DEFAULT_CONDITIONS, DeliveryWeatherService } = require('../src/weather');
 const { createApp } = require('../src/server');
 
 function weatherResponse() {
@@ -34,8 +34,7 @@ test('uses default delivery data and logs a failure when no cached response exis
   const messages = [];
   const service = new DeliveryWeatherService({ apiKey: 'test-key', logger: { error: (message) => messages.push(message) }, fetchFn: async () => { throw new Error('service down'); } });
   const result = await service.getConditions();
-  assert.equal(result.source, 'default');
-  assert.match(result.condition, /unavailable/);
+  assert.deepEqual(result, { ...DEFAULT_CONDITIONS, source: 'default' });
   assert.match(messages[0], /service down/);
 });
 

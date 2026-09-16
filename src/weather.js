@@ -6,6 +6,10 @@ const DEFAULT_CONDITIONS = {
   temperatureC: null
 };
 
+function defaultConditions() {
+  return { ...DEFAULT_CONDITIONS, source: 'default' };
+}
+
 class DeliveryWeatherService {
   constructor({ apiKey, location, fetchFn = fetch, logger = console, now = () => Date.now(), ttlMs = CACHE_TTL_MS } = {}) {
     this.apiKey = apiKey;
@@ -80,7 +84,7 @@ class DeliveryWeatherService {
       }
 
       // Fallback without caching failures so next attempt can retry immediately
-      return { ...DEFAULT_CONDITIONS, source: 'default' };
+      return defaultConditions();
     }
   }
 }

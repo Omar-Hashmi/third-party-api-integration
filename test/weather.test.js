@@ -49,3 +49,15 @@ test('the bookshop page still loads when weather data is unavailable', async () 
     await new Promise((resolve) => server.close(resolve));
   }
 });
+
+test('the dedicated weather page displays Lahore conditions', async () => {
+  const server = createApp({ weatherService: { getConditions: async () => ({ location: 'Lahore', condition: 'Sunny', temperatureC: 31, source: 'live' }) } });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const response = await fetch(`http://127.0.0.1:${server.address().port}/weather`);
+    assert.equal(response.status, 200);
+    assert.match(await response.text(), /Lahore weather/);
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});
